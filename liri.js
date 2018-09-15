@@ -1,20 +1,17 @@
 
+require('dotenv').config();
 const inquirer = require("inquirer");
 var request = require("request");
 const moment = require('moment');
-const bandsintown = require('bandsintown')("app_id=codingbootcamp");
+moment().format();
+var spotifyApp = require('spotify-web-api-node');
+const bandsintown = require('bandsintown')('app_id=' + bandsinTownApi);
 var fs = require("fs");
+var apiKey = require("./keys.js");
+var bandsinTownApi = require("./keys.js");
+// var spotify = new Spotify(keys.spotify);
+
 //======================================================================
-require('dotenv').config();
-fs.readFile("keys.js", "utf8", function(error, data) {
-    if (error) {
-        return console.log(error);
-      }
-      console.log(data);
-      var dataArr = data.split(",");
-      console.log(dataArr);
-    });
- //===========================================================
 inquirer 
 .prompt([
     {
@@ -33,7 +30,7 @@ inquirer
 .then(function(inquirerResponse)
 {
 //============================BANDS IN TOWN =================================================
-    if (inquirerResponse.commands === "concert-this") {
+    if (inquirerResponse.commands === "concert-this") { function bandsInTownFunction(){
 
             if ( inquirerResponse.title == ""){
                 console.log("\nTry typing an artist/band name. \n")
@@ -53,19 +50,25 @@ inquirer
           });
         }
     }
+    bandsInTownFunction(); 
+    }
+    
 //==========================SPOTIFY=====================================================    
-    else if (inquirerResponse.choices === "spotify-this-song") {
+    else if (inquirerResponse.choices === "spotify-this-song") { function spotifySong(){
         console.log(inquirerResponse.commands);
     }
+    spotifySong();
+} 
 //=======================OMDB API Call=====================================================
-    else if (inquirerResponse.commands === "movie-this") {
+    else if (inquirerResponse.commands === "movie-this") { 
+        
              if (inquirerResponse.title == "") 
-             {
-                queryUrl = "http://www.omdbapi.com/?t=mr" + " "+ "nobody&y=&plot=short&tomatoes=true&apikey=trilogy";
+             { 
+                queryUrl = "http://www.omdbapi.com/?t=mr" + " "+ "nobody&y=&plot=short&tomatoes=true" + apiKey;
              }
             else 
             {
-                var queryUrl = "http://www.omdbapi.com/?t=" + inquirerResponse.title + "&y=&plot=short&tomatoes=true&apikey=trilogy";
+                var queryUrl = "http://www.omdbapi.com/?t=" + inquirerResponse.title + "&y=&plot=short&tomatoes=true" + apiKey ;
             }
                 request(queryUrl, function(error, response, body) 
                 {
@@ -84,23 +87,35 @@ inquirer
                                 return console.log(err);
                               }
                               console.log("movies.txt was updated!");
-                        
                             });
                     }
                 });
+            
     }          
 //==============================Imported File==============================================================
     else if (inquirerResponse.commands === "do-what-it-says") {
-        console.log("\nPsych, Joke is on you, this file does what it wants!")
+        console.log("\nPsych, Joke is on you, this command does what it wants!")
         fs.readFile("random.txt", "utf8", function(error, data) {
             if (error) {
                 return console.log(error);
             }
-            var dataArr = data.split(",");
+            var dataArr = data.split(","); 
+            // var dataArrUsable = JSON.parse(data);
             inquirerResponse.commands = dataArr[0];
             inquirerResponse.title = dataArr[1];
+            console.log(inquirerResponse.commands);
+ //==================================================================================           
+            if (inquirerResponse.commands === "concert-this") {
+                bandsInTownFunction()}
+            else if (inquirerResponse.commands === "spotify-this"){}
+            else {}
+            
+            var dataArrObj = [inquirerResponse.commands,inquirerResponse.title]
             inquirerResponse;
-            console.log(inquirerResponse);
+            console.log(inquirerResponse.title);
+                
+            
+            
             fs.appendFile("log.txt", "\n" + inquirerResponse.commands +" " + inquirerResponse.title, function(err) {
                 if (err) {
                     return console.log(err);
@@ -110,6 +125,5 @@ inquirer
                 });
         });
     }
-//========================================================================================
 });
 
