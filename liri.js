@@ -1,15 +1,12 @@
 
 require('dotenv').config();
-const inquirer = require("inquirer");
+var inquirer = require("inquirer");
 var request = require("request");
-const moment = require('moment');
-moment().format();
-var spotifyApp = require('spotify-web-api-node');
-const bandsintown = require('bandsintown')('app_id=' + bandsinTownApi);
+var bandsintown = require('bandsintown')('app_id=' + bandsinTownApi);
 var fs = require("fs");
 var apiKey = require("./keys.js");
 var bandsinTownApi = require("./keys.js");
-// var spotify = new Spotify(keys.spotify);
+
 
 //======================================================================
 inquirer 
@@ -54,11 +51,12 @@ inquirer
     }
     
 //==========================SPOTIFY=====================================================    
-    else if (inquirerResponse.choices === "spotify-this-song") { function spotifySong(){
-        console.log(inquirerResponse.commands);
+    else if (inquirerResponse.commands === "spotify-this-song") { 
+        console.log(inquirerResponse.commands)
+        spotify = require("./spotify")
+        //Using access token, send actual inquirerResponse.title value to spotify Api
+        //Receive response, parse JSON data into usable, readable portion.
     }
-    spotifySong();
-} 
 //=======================OMDB API Call=====================================================
     else if (inquirerResponse.commands === "movie-this") { 
         
